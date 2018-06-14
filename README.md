@@ -1,27 +1,32 @@
-# Angular5Streams
+### Running the Application
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.4.
+1. Install [Node.js](http://nodejs.org)
 
-## Development server
+2. Install the Angular CLI globally:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+    `npm install -g @angular/cli`
 
-## Code scaffolding
+3. Run `npm install` to install app dependencies
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+4. Run `npm serve --open` to start the server. It will automatically open your browser at http://localhost:4200
 
-## Build
+#### Notes
+1. In its current form the data is dumped in tabular form. There is no code to pause the inflow, so the browser will get overloaded and eventually crash.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+2. My end goal is to summarize the data on certain attributes (language, date range) and use that to present charts/graphs to the user. This is not done yet. 
 
-## Running unit tests
+3. I see some bad JSON (busted data) coming in. It has to be handled.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+4. Regex search for Tweet text and Date Range searches are not functional.
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### How I envision to present the data
+1. Let's say when a user searches for terms "narcos" or "narcos|sucks" we could present the data in charts/graphs that display 
+- Counts by language if language selection is "All"
+- Counts by verified tweets if verified selection is "All"
+- Counts by days
+- Data broken down by hours of day
+- Further drill-downs on presented data 
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+### Other data points that will help users
+1. Having a zip code could help to know where certain tweets originating from

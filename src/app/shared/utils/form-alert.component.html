@@ -1,0 +1,10 @@
+<div class="col-xl-12 col-lg-12" style="width: 100%; postion: relative;">
+  <div *ngIf="alertMessage.message" class="alert alert-dismissible {{alertMessage.alertType}}" role="alert"
+       style="width: 100%; text-align: center; postion: static;">
+    {{alertMessage.message}}
+    <!-- Close button -->
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
