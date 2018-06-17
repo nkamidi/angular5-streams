@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import * as EventSource from 'eventsource';
@@ -17,7 +17,7 @@ export class TweetsService {
   graphData: GraphData[] = [];
   graphData2 = {};
   url = 'https://tweet-service.herokuapp.com/stream';
-  count: number = 0;
+  count = 0;
   groupedByData = [];
 
   constructor() {
@@ -26,8 +26,7 @@ export class TweetsService {
   static validJSON(data) {
     try {
       JSON.parse(data);
-    }
-    catch (e) {
+    } catch (e) {
       // console.log('invalid json, error:', e);
       // console.log('invalid JSON', data);
       return false;
@@ -74,7 +73,7 @@ export class TweetsService {
         }
 
         if (verified !== 'all') {
-          this.tweets = this.tweets.filter(item => !!item.verified == !!verified);
+          this.tweets = this.tweets.filter(item => !!item.verified === !!verified);
         }
 
         const summedUpData = this.sumUpData(this.tweets, 'language');
@@ -84,6 +83,7 @@ export class TweetsService {
           this.graphData.push({'language': key, 'count': summedUpData[key]});
         });*/
 
+        console.log("tweets.service-this.tweets.length:", this.tweets.length);
         observer.next(this.tweets);
       };
 
@@ -113,7 +113,7 @@ export class TweetsService {
       this.url = 'https://tweet-service.herokuapp.com/stream';
 
       const eventSource = new EventSource(this.url);
-      console.log('TweetsService filter:', tweetFilter, tweetFilterText, language, dateRange, verified);
+      // console.log('TweetsService filter:', tweetFilter, tweetFilterText, language, dateRange, verified);
 
       eventSource.onmessage = (event) => {
         this.count++;
@@ -151,6 +151,8 @@ export class TweetsService {
           this.graphData.push({'language': key, 'count': summedUpData[key]});
         });*/
 
+        // console.log("tweets.service-this.tweets.length:", this.tweets.length);
+        // console.log("tweets.service-this.tweets:", this.tweets);
         observer.next(this.tweets);
       };
 

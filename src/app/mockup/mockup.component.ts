@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {TweetsService} from './shared/services';
-import {AlertMessage, Tweet, GraphData} from './shared/models';
+import {TweetsService} from '../shared/services';
+import {AlertMessage, Tweet, GraphData} from '../shared/models';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {filter, flatMap, switchMap, throttle, debounce, scan} from 'rxjs/operators';
@@ -14,24 +14,13 @@ import * as d3Axis from 'd3-axis';
 
 import {Chart} from 'chart.js';
 
-/*
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-export class AppComponent {
-  title = 'app';
-}
-*/
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app-mockup',
+  templateUrl: './mockup.component.html',
+  styleUrls: ['./mockup.component.css']
 })
 /**/
-export class AppComponent implements OnInit, OnDestroy {
+export class MockupComponent implements OnInit, OnDestroy {
   private width: number;
   private height: number;
   private margin = {top: 20, right: 20, bottom: 30, left: 40};
@@ -112,68 +101,12 @@ export class AppComponent implements OnInit, OnDestroy {
       this.testData01 = this.generateTestData01();
       this.testData02 = this.generateTestData02();
       this.testData03 = this.generateTestData03();
-    }, 1500);
+    }, 2000);
   }
 
   ngOnDestroy(): void {
     this._dataSubscription.unsubscribe();
   }
-
-  /*private drawChart() {
-    this.graphData = [{language: 'en', count: 160}, {language: 'es', count: 140}, {language: 'de', count: 103}, {
-      language: 'jp',
-      count: 120
-    }, {language: 'fr', count: 110}, {language: 'others', count: 200}];
-
-    this.initSvg();
-    this.initAxis();
-    this.drawAxis();
-    this.drawBars();
-
-  }
-
-  private initSvg() {
-    this.svg = d3.select('svg');
-    this.width = +this.svg.attr('width') - this.margin.left - this.margin.right;
-    this.height = +this.svg.attr('height') - this.margin.top - this.margin.bottom;
-    this.g = this.svg.append('g')
-      .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
-  }
-
-  private initAxis() {
-    this.x = d3Scale.scaleBand().rangeRound([0, this.width]).padding(0.1);
-    this.y = d3Scale.scaleLinear().rangeRound([this.height, 0]);
-    this.x.domain(this.graphData.map((d) => d.letter));
-    this.y.domain([0, d3Array.max(this.graphData, (d) => d.frequency)]);
-  }
-
-  private drawAxis() {
-    this.g.append('g')
-      .attr('class', 'axis axis--x')
-      .attr('transform', 'translate(0,' + this.height + ')')
-      .call(d3Axis.axisBottom(this.x));
-    this.g.append('g')
-      .attr('class', 'axis axis--y')
-      .call(d3Axis.axisLeft(this.y).ticks(10, '%'))
-      .append('text')
-      .attr('class', 'axis-title')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 6)
-      .attr('dy', '0.71em')
-      .attr('text-anchor', 'end')
-      .text('Frequency');
-  }
-
-  private drawBars() {
-    this.g.selectAll('.bar')
-      .data(this.graphData)
-      .enter().append('rect')
-      .attr('class', 'bar')
-      .attr('x', (d) => this.x(d.letter))
-      .attr('y', (d) => this.y(d.frequency))
-      .attr('width', this.x.bandwidth())
-      .attr('height', (d) => this.height - this.y(d.frequency));
-  }*/
 
   getTweets(): void {
     console.log('Fetching the data...');
@@ -371,115 +304,6 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
-  /*
-  drawBarChart2(data) {
-    const _data = [30, 86, 168, 281, 303, 365];
-    const fullWidth = 500, fullHeight = 500, margin = {top: 5, right: 5, bottom: 50, left: 50};
-    const width = fullWidth - margin.right - margin.left;
-    const height = fullHeight - margin.top - margin.bottom;
-
-    let chart = d3.select('.chart2').append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-
-    let xChart = d3.scaleBand()
-      .range([0, width]);
-
-    let yChart = d3.scaleLinear()
-      .range([height, 0]);
-
-    let xAxis = d3.axisBottom(xChart);
-    let yAxis = d3.axisLeft(yChart);
-
-    // set up axes
-    // left axis
-    chart.append('g')
-      .attr('class', 'y axis')
-      .call(yAxis);
-
-    // bottom axis
-    chart.append('g')
-      .attr('class', 'xAxis')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(xAxis)
-      .selectAll('text')
-      .style('text-anchor', 'end')
-      .attr('dx', '-.8em')
-      .attr('dy', '.15em')
-      .attr('transform', function (d) {
-        return 'rotate(-65)';
-      });
-
-    // add labels
-    chart
-      .append('text')
-      .attr('transform', 'translate(-35,' + (height + margin.bottom) / 2 + ') rotate(-90)')
-      .text('% of total watch time');
-
-    chart
-      .append('text')
-      .attr('transform', 'translate(' + (width / 2) + ',' + (height + margin.bottom - 5) + ')')
-      .text('age group');
-
-    // set domain for the x axis
-    xChart.domain(data.map(function (d) {
-      return d.status;
-    }));
-
-    // set domain for y axis
-    yChart.domain([0, d3.max(data, function (d) {
-      return +d.count;
-    })]);
-
-    // get the width of each bar
-    const barWidth = width / data.length;
-
-    // select all bars on the graph, take them out, and exit the previous data set. then you can add/enter the new data set
-    const bars = chart.selectAll('.bar')
-      .remove()
-      .exit()
-      .data(data);
-    // now actually give each rectangle the corresponding data
-    bars.enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', function (d, i) {
-        return i * barWidth + 1;
-      })
-      .attr('y', function (d) {
-        return yChart(d.count);
-      })
-      .attr('height', function (d) {
-        return height - yChart(d.count);
-      })
-      .attr('width', barWidth - 1)
-      .attr('fill', function (d) {
-        if (d.viewer_gender === 'true') {
-          return 'rgb(251,180,174)';
-        } else {
-          return 'rgb(179,205,227)';
-        }
-      });
-    // left axis
-    chart.select('.y')
-      .call(yAxis);
-    // bottom axis
-    chart.select('.xAxis')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(xAxis)
-      .selectAll('text')
-      .style('text-anchor', 'end')
-      .attr('dx', '-.8em')
-      .attr('dy', '.15em')
-      .attr('transform', function (d) {
-        return 'rotate(-65)';
-      });
-
-  }*/
-
   sumUpData(arr, property) {
     return arr.reduce(function (acc, obj) {
       const key = obj[property];
@@ -490,49 +314,6 @@ export class AppComponent implements OnInit, OnDestroy {
       acc[key] += 1;
       return acc;
     }, {});
-  }
-
-  private initSvg() {
-    this.svg = d3.select('svg');
-    this.width = +this.svg.attr('width') - this.margin.left - this.margin.right;
-    this.height = +this.svg.attr('height') - this.margin.top - this.margin.bottom;
-    this.g = this.svg.append('g')
-      .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
-  }
-
-  private initAxis() {
-    this.x = d3Scale.scaleBand().rangeRound([0, this.width]).padding(0.1);
-    this.y = d3Scale.scaleLinear().rangeRound([this.height, 0]);
-    this.x.domain(this.verifiedStatusData.map((d) => d.status));
-    this.y.domain([0, d3Array.max(this.verifiedStatusData, (d) => d.count)]);
-  }
-
-  private drawAxis() {
-    this.g.append('g')
-      .attr('class', 'axis axis--x')
-      .attr('transform', 'translate(0,' + this.height + ')')
-      .call(d3Axis.axisBottom(this.x));
-    this.g.append('g')
-      .attr('class', 'axis axis--y')
-      .call(d3Axis.axisLeft(this.y).ticks(5))
-      .append('text')
-      .attr('class', 'axis-title')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 6)
-      .attr('dy', '0.71em')
-      .attr('text-anchor', 'end')
-      .text('Count');
-  }
-
-  private drawBars() {
-    this.g.selectAll('.bar')
-      .data(this.verifiedStatusData)
-      .enter().append('rect')
-      .attr('class', 'bar')
-      .attr('x', (d) => this.x(d.status))
-      .attr('y', (d) => this.y(d.count))
-      .attr('width', this.x.bandwidth())
-      .attr('height', (d) => this.height - this.y(d.count));
   }
 
   private generateTestData01() {

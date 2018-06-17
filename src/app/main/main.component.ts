@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {TweetsService} from './shared/services';
-import {AlertMessage, Tweet, GraphData} from './shared/models';
+import {TweetsService} from '../shared/services';
+import {AlertMessage, Tweet, GraphData} from '../shared/models';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {filter, flatMap, switchMap, throttle, debounce, scan} from 'rxjs/operators';
@@ -14,24 +14,13 @@ import * as d3Axis from 'd3-axis';
 
 import {Chart} from 'chart.js';
 
-/*
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-export class AppComponent {
-  title = 'app';
-}
-*/
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.css']
 })
 /**/
-export class AppComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit, OnDestroy {
   private width: number;
   private height: number;
   private margin = {top: 20, right: 20, bottom: 30, left: 40};
@@ -94,7 +83,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("In mockup.component");
+    console.log('In mockup.component');
     const data = [30, 86, 168, 281, 303, 365];
     d3.select('.chart1')
       .selectAll('div')
@@ -573,5 +562,3 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 }
-
-
