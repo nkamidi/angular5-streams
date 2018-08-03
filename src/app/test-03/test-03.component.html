@@ -16,24 +16,24 @@
   <div class="row" style="">
     <div class="col"
          style="background-color: #f5f5f5; border-bottom: 1px solid lightgrey; height: 250px; padding-top: 15px;">
-      <h4>Filter your tweets by</h4>
+      <h4>Filter your records by</h4>
       <!--<div class="row" style="border-bottom: 1px solid lightgrey; font-weight: bold; margin-top: 15px;">
         <div class="col-2">Field</div>
         <div class="col-4">Filter Type</div>
         <div class="col-6"></div>
       </div>-->
       <div class="row" style="margin-top: 10px;">
-        <div class="col-2">Tweet Text</div>
+        <div class="col-2">Status Text</div>
         <div class="col-3">
-          <select class="form-control col-lg-6" [(ngModel)]="tweetFilter">
+          <select class="form-control col-lg-6" [(ngModel)]="filter">
             <option value="all" selected>All</option>
             <option value="contains">Contains</option>
             <option value="equals">Equals</option>
             <option value="regex">Regex</option>
           </select>
         </div>
-        <div class="col-6" [hidden]="tweetFilter === 'all'"><input type="text" class="col-lg-6"
-                                                                   [(ngModel)]="tweetFilterText"></div>
+        <div class="col-6" [hidden]="filter === 'all'"><input type="text" class="col-lg-6"
+                                                              [(ngModel)]="filterText"></div>
       </div>
       <div class="row" style="margin-top: 10px;">
         <div class="col-2">Limit the records to</div>
@@ -84,10 +84,11 @@
         <div class="col-12" style="">
           <div class="col-7"></div>
           <div class="col-5" style="float: right;">
-            <button class="btn btn-primary btn-sm" (click)="getTweetsV2()">Get Data</button> &nbsp;&nbsp;<button
-            class="btn btn-primary btn-sm" (click)="blockStream()" [hidden]="streamingStatus !== 'STREAM-IN-PROGRESS'">
-            Pause Data Stream
-          </button>
+            <!--<button class="btn btn-primary btn-sm" (click)="getServerDataV2()">Get Data</button> &nbsp;&nbsp;-->
+            <button class="btn btn-primary btn-sm" (click)="getServerDataV1()">Get Data</button> &nbsp;&nbsp;
+            <button class="btn btn-primary btn-sm" [hidden]="streamingStatus !== 'STREAM-IN-PROGRESS'">Pause Data
+              Stream
+            </button>
           </div>
         </div>
       </div>
@@ -129,72 +130,100 @@
   </div>
 </div>-->
 
+
 <div class="container" style="margin-top: 60px;">
   <div class="row" style="">
     <div class="col-7" style="">
-      <span [hidden]="streamingStatus === 'NONE'"><strong> Records processed:</strong> {{recordCount}}</span><br><br>
+      <span><strong> Records processed:</strong> {{recordCount}}</span><br><br>
     </div>
   </div>
 
   <!-- Vertical Bar Graph -->
+  <!--  <div class="row" style="">
+      <div class="col-6">
+        <kendo-chart [transitions]="false" id="lang-chart">
+          <kendo-chart-series>
+            <kendo-chart-series-item type="column" [data]="langGraphData" field="count"
+                                     categoryField="code"></kendo-chart-series-item>
+          </kendo-chart-series>
+        </kendo-chart>
+      </div>
+    </div>-->
+
+  <!-- Vertical Bar Graph -->
   <div class="row" style="">
     <div class="col-6">
-      <kendo-chart [transitions]="false">
+      <kendo-chart [transitions]="false" id="lang-chart">
         <kendo-chart-series>
           <kendo-chart-series-item type="column" [data]="langGraphData" field="count"
                                    categoryField="code"></kendo-chart-series-item>
         </kendo-chart-series>
       </kendo-chart>
     </div>
+
     <div class="col-6">
-      <kendo-chart [transitions]="false">
+      <kendo-chart [transitions]="false" id="server-chart">
         <kendo-chart-series>
-          <kendo-chart-series-item type="column" [data]="verifiedStatusData" field="count2"
-                                   categoryField="status"></kendo-chart-series-item>
+          <kendo-chart-series-item type="column" [data]="serverGraphData" field="results"
+                                   categoryField="server"></kendo-chart-series-item>
         </kendo-chart-series>
       </kendo-chart>
     </div>
   </div>
 
+  <div class="row" style="">
+    <div class="col-6">
+      <kendo-chart [transitions]="false" id="status-chart">
+        <kendo-chart-series>
+          <kendo-chart-series-item type="column" [data]="statusGraphData" field="count3"
+                                   categoryField="status"></kendo-chart-series-item>
+        </kendo-chart-series>
+      </kendo-chart>
+    </div>
+
+    <div class="col-6">
+    </div>
+  </div>
+
 </div>
 
-<!-- Tabular form -->
 <div class="container" style="margin-top: 60px;">
   <div class="row" style="">
-    <div class="col-7" style="">
-      <table class="table table-borderless col-xl-12 col-lg-12 col-md-12">
-        <thead>
-        <tr>
-          <th scope="col">Language</th>
-          <th scope="col">Count</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let item of langGraphData">
-          <td>{{item.code}}</td>
-          <td>{{item.count}}</td>
-        </tr>
-        </tbody>
-      </table>
+    <div class="col-5">
+      <kendo-chart>
+        <kendo-chart-title text="Language breakdown"></kendo-chart-title>
+        <kendo-chart-series>
+          <kendo-chart-series-item type="column" [data]="testData02" field="count"
+                                   categoryField="language"></kendo-chart-series-item>
+        </kendo-chart-series>
+      </kendo-chart>
     </div>
-    <div class="col-5" style="">
-      <table class="table table-borderless col-xl-12 col-lg-12 col-md-12">
-        <thead>
-        <tr>
-          <th scope="col">Verified<br>Status</th>
-          <th scope="col">Count</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let item of verifiedStatusData">
-          <td>{{item.status}}</td>
-          <td>{{item.count}}</td>
-        </tr>
-        </tbody>
-      </table>
+    <div class="col-5">
+      <kendo-chart [categoryAxis]="{ days: days }">
+        <kendo-chart-title text="Language breakdown for last 7 days"></kendo-chart-title>
+        <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
+        <kendo-chart-tooltip format="{0}%"></kendo-chart-tooltip>
+        <kendo-chart-series>
+          <kendo-chart-series-item *ngFor="let item of testData03" type="line" style="smooth" [data]="item.data"
+                                   [name]="item.language">
+          </kendo-chart-series-item>
+        </kendo-chart-series>
+      </kendo-chart>
     </div>
-
   </div>
-</div>
+  <div class="row" style="">
+    <div class="col-5">
+      <kendo-chart>
+        <kendo-chart-title text="Verified Status breakdown"></kendo-chart-title>
+        <kendo-chart-series>
+          <kendo-chart-series-item type="column" [data]="testData01" field="count"
+                                   categoryField="category"></kendo-chart-series-item>
+        </kendo-chart-series>
+      </kendo-chart>
+    </div>
+    <div class="col-5">
+    </div>
+  </div>
 
+</div>
 

@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {TweetsService} from '../shared/services';
+import {TweetsService, StreamingDataService} from '../shared/services';
 import {AlertMessage, Tweet, GraphData} from '../shared/models';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
@@ -16,12 +16,12 @@ import * as d3Axis from 'd3-axis';
 import {Chart} from 'chart.js';
 
 @Component({
-  selector: 'app-mockup',
-  templateUrl: './mockup.component.html',
-  styleUrls: ['./mockup.component.css']
+  selector: 'app-test03',
+  templateUrl: './test-03.component.html',
+  styleUrls: ['./test-03.component.css']
 })
 /**/
-export class MockupComponent implements OnInit, OnDestroy {
+export class Test03Component implements OnInit, OnDestroy {
   private width: number;
   private height: number;
   private margin = {top: 20, right: 20, bottom: 30, left: 40};
@@ -31,8 +31,8 @@ export class MockupComponent implements OnInit, OnDestroy {
   private g: any;
 
   /* Filters */
-  tweetFilter = 'all';
-  tweetFilterText = '';
+  filter = 'all';
+  filterText = '';
   language = 'all';
   dateRange = '7d';
   verified = 'all';
@@ -47,10 +47,13 @@ export class MockupComponent implements OnInit, OnDestroy {
   tweetData: any[] = [];
   graphData: Observable<GraphData>;
   langGraphData = [];
+  serverGraphData = [];
+  statusGraphData = [];
   langGraphData2: Observable<GraphData[]>;
   verifiedStatusData = [];
   verifiedStatusData2 = [];
   verifiedStatusData$: Observable<{}>;
+  streamingData$: Observable<any[]>;
   recordCount: number;
   sub: Subscription;
   pagination: boolean;
@@ -63,7 +66,8 @@ export class MockupComponent implements OnInit, OnDestroy {
   testData03 = [];
   days = ['Today', 'Day-1', 'Day-2', 'Day-3', 'Day-4', 'Day-5', 'Day-6', 'Day-7'];
 
-  constructor(private tweetsService: TweetsService) {
+  constructor(private tweetsService: TweetsService,
+              private streamingDataService: StreamingDataService) {
     this.pagination = true;
     this.page = 0;
     this.size = 50;
@@ -75,11 +79,15 @@ export class MockupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    setInterval(() => {
+    /*this._dataSubscription = this.streamingDataService.createStreamingData01().subscribe(item => {
+      console.log(item);
+    });*/
+
+    /*setInterval(() => {
       this.testData01 = this.generateTestData01();
       this.testData02 = this.generateTestData02();
       this.testData03 = this.generateTestData03();
-    }, 2000);
+    }, 2000);*/
     window.scroll(0, 0);
   }
 
@@ -89,17 +97,11 @@ export class MockupComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTweets(): void {
-    console.log('Fetching the data...');
-    this.isProcessing = true;
-    this.tweets = this.tweetsService.getTweets(this.page, this.size, this.tweetFilter, this.tweetFilterText, this.language, this.dateRange, this.verified);
-  }
-
-  getTweetsV2(): void {
+  getServerDataV1(): void {
     this.isProcessing = true;
     const _limit = this.recordLimit === 'none' ? 0 : Number(this.recordLimit);
 
-    console.log('starting getTweetsV2...');
+    console.log('starting getServerDataV1...');
     if (this._dataSubscription) {
       this._dataSubscription.unsubscribe();
     }
@@ -109,52 +111,115 @@ export class MockupComponent implements OnInit, OnDestroy {
     });
     this.recordCount = 0;
 
-    this.verifiedStatusData = [].concat([{'status': 'true', 'count': 0}, {'status': 'false', 'count': 0}]);
-
-    if (!this._dataSubscription) {
-      this._dataSubscription = this.tweetsService.getTweetsV2(this.tweetFilter, this.tweetFilterText, this.language, this.dateRange, this.verified)
-      // .throttleTime(1000)
-        .take(_limit)
-        .subscribe(item => {
-            let _tempData = [], _tempData2 = []; // [].concat([{'status': 'true', 'count': 0}, {'status': 'false', 'count': 0}]);
-            this.streamingStatus = 'STREAM-IN-PROGRESS';
-            this.recordCount = Object.keys(item).length;
-
-            const summedUpData = this.sumUpData(item, 'language');
-            _tempData = [];
-
-            this.langGraphData.forEach((rec, index) => {
-              _tempData.push({'code': rec.code, 'count': summedUpData[rec.code]});
-              if (summedUpData[rec.code]) {
-                this.langGraphData[index].count = summedUpData[rec.code];
+    this.streamingDataService.getNodeJsApiDataV1(this.filter, this.filterText, this.language, this.dateRange, this.verified)
+      .subscribe(dat => {
+        const data = dat.filter(item => {
+          return item;
+          // return item.status.indexOf('rebooting') > -1;
+          /*if (this.filter !== 'all') {
+            if (this.filterText !== '') {
+              if (this.filter === 'contains') {
+                return item.status.toLowerCase().indexOf(this.filterText.toLowerCase()) > -1;
+              } else if (this.filter === 'equals') {
+                return item.status.toLowerCase() === this.filterText.toLowerCase();
+              } else if (this.filter === 'regex') {
+                const re = '/[' + this.filterText.split(',').join('|') + ']/gi';
+                return item.status.match(re);
               }
-            });
+            } else {
+              return item;
+            }
+          }*/
+        });
+        this.recordCount = data.length;
 
-            const verifiedData = this.sumUpData(item, 'verified');
-            _tempData2 = [];
-            this.verifiedStatusData.forEach((rec, index) => {
-              _tempData2.push({'status': rec.status, 'count': verifiedData[rec.status]});
-              if (verifiedData[rec.status]) {
-                this.verifiedStatusData[index].count = verifiedData[rec.status];
-              }
-            });
-            this.verifiedStatusData = [].concat(_tempData2);
+        console.log('test-03.component - data:', data);
+        let _tempData = [], summedUpData = [];
+        this.serverGraphData = [];
 
-            this.verifiedStatusData$ = Observable.from(this.verifiedStatusData);
-          },
-          error => {
-            console.log('app.component-getTweetsV2-error:', error);
-            this.isProcessing = false;
-            this.streamingStatus = 'STREAM-FAILED';
-            this._dataSubscription.unsubscribe();
-            this._dataSubscription = null;
-          }, () => {
-            this.isProcessing = false;
-            this.streamingStatus = 'STREAM-COMPLETE';
-            this._dataSubscription.unsubscribe();
-            this._dataSubscription = null;
-          });
+        summedUpData = this.sumUpData(data, 'server');
+
+        Object.keys(summedUpData).forEach(key => {
+          this.serverGraphData.push({'server': key, 'results': summedUpData[key]});
+        });
+        // console.log('this.serverGraphData', this.serverGraphData);
+
+        summedUpData = this.sumUpData(data, 'status');
+
+        this.statusGraphData = [];
+        Object.keys(summedUpData).forEach(key => {
+          this.statusGraphData.push({'status': key, 'count3': summedUpData[key]});
+        });
+
+        summedUpData = this.sumUpData(data, 'language');
+
+        _tempData = [];
+        this.langGraphData.forEach((rec, index) => {
+          _tempData.push({'code': rec.code, 'count': summedUpData[rec.code]});
+          if (summedUpData[rec.code]) {
+            this.langGraphData[index].count = summedUpData[rec.code];
+          }
+        });
+
+        this.langGraphData = [].concat(_tempData);
+        console.log('this.langGraphData', this.langGraphData);
+      });
+
+  }
+
+  getServerDataV2(): void {
+    this.isProcessing = true;
+    const _limit = this.recordLimit === 'none' ? 0 : Number(this.recordLimit);
+
+    console.log('starting getServerDataV1...');
+    if (this._dataSubscription) {
+      this._dataSubscription.unsubscribe();
     }
+
+    this.langGraphData.forEach((rec, index) => {
+      this.langGraphData[index].count = 0;
+    });
+    this.recordCount = 0;
+
+    this.streamingDataService.getLocalStreamingDataV1()
+      .subscribe(dat => {
+        const data = dat.filter(item => {
+          return item;
+        });
+        this.recordCount = data.length;
+
+        console.log('test-03.component - data:', data);
+        let _tempData = [], summedUpData = [];
+        this.serverGraphData = [];
+
+        summedUpData = this.sumUpData(data, 'server');
+
+        Object.keys(summedUpData).forEach(key => {
+          this.serverGraphData.push({'server': key, 'results': summedUpData[key]});
+        });
+        // console.log('this.serverGraphData', this.serverGraphData);
+
+        summedUpData = this.sumUpData(data, 'status');
+
+        this.statusGraphData = [];
+        Object.keys(summedUpData).forEach(key => {
+          this.statusGraphData.push({'status': key, 'count3': summedUpData[key]});
+        });
+
+        summedUpData = this.sumUpData(data, 'language');
+
+        _tempData = [];
+        this.langGraphData.forEach((rec, index) => {
+          _tempData.push({'code': rec.code, 'count': summedUpData[rec.code]});
+          if (summedUpData[rec.code]) {
+            this.langGraphData[index].count = summedUpData[rec.code];
+          }
+        });
+
+        this.langGraphData = [].concat(_tempData);
+        console.log('this.langGraphData', this.langGraphData);
+      });
+
   }
 
   blockStream(): void {
@@ -236,5 +301,3 @@ export class MockupComponent implements OnInit, OnDestroy {
   }
 
 }
-
-

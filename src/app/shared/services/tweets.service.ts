@@ -143,16 +143,6 @@ export class TweetsService {
         if (verified !== 'all') {
           this.tweets = this.tweets.filter(item => !!item.verified === !!verified);
         }
-
-        /*const summedUpData = this.sumUpData(this.tweets, 'language');
-        console.log("tweets.service - summedUpData:", summedUpData);
-
-        Object.keys(summedUpData).forEach((key) => {
-          this.graphData.push({'language': key, 'count': summedUpData[key]});
-        });*/
-
-        // console.log("tweets.service-this.tweets.length:", this.tweets.length);
-        // console.log("tweets.service-this.tweets:", this.tweets);
         observer.next(this.tweets);
       };
 
@@ -229,15 +219,6 @@ export class TweetsService {
         });
 
         observer.next(this.graphData);
-
-        /*this.graphData.push(summedUpData);
-        */
-
-        /*this.graphData2 = Object.assign(summedUpData);
-        console.log("tweets.service-this.graphData2:", this.graphData2);
-        observer.next(this.graphData2);*/
-
-        // observer.next(this.tweets);
       };
 /**/
       eventSource.onerror = (error) => {
@@ -260,12 +241,7 @@ export class TweetsService {
 
   updateLanguageObject(obj) {
     let _found = false;
-    /*for (let i=0; i< this.graphData.length; i++){
-      if (this.graphData[i].language === obj.lang) {
-        _found = true;
-        this.graphData[i].count++;
-      }
-    }*/
+
     this.graphData.forEach((item, index) => {
       if (item.language === obj.lang) {
         _found = true;

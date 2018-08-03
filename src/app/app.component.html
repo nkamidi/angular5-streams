@@ -1,21 +1,39 @@
-<div class="container" style="margin-top: 60px;">
-  <div class="row" style="">
+<div class="container">
+<!--  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">Tweet Finder</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <h1>Select your view</h1>
-  </div>
-  <div class="row" style="margin-top: 20px;">
-
-    <div class="card" style="width: 18rem;">
-      <div class="card-body">
-        <h5 class="card-title">Mockup View</h5>
-        <p class="card-text">Non-functional view that show how the final output will look like.</p>
-        <a class="btn btn-primary" routerLink="/mockup">Go</a>
-      </div>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <a class="btn btn-primary btn-sm" routerLinkActive="active" routerLink="/mockup">Mockup View</a>&nbsp;&nbsp;
+     <a class="btn btn-primary btn-sm" routerLinkActive="active" routerLink="/main">Stream View</a>
     </div>
+  </nav>-->
 
-    <!--<nav>
-      <a routerLink="/main">Data Streaming View</a>
-      <a routerLink="/heroes">Mockup View</a>
-    </nav>-->
-  </div>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">Tweet Finder</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/mockup">Mockup View</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/main">Stream View</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/test-03">Test 03</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
 </div>
+
+<router-outlet></router-outlet>

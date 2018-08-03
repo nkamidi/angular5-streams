@@ -1,5 +1,5 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div class="container">
+<!--<div class="container">
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="/">Tweet Finder</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
     </div>
   </nav>
-</div>
+</div>-->
 
 <div class="container" style="margin-top: 60px; font-size: .8em">
   <div class="row" style="">
@@ -84,8 +84,8 @@
         <div class="col-12" style="">
           <div class="col-7"></div>
           <div class="col-5" style="float: right;">
-            <button class="btn btn-primary btn-sm" (click)="getTweetsV2()">Get Data</button> &nbsp;&nbsp;<button
-            class="btn btn-primary btn-sm" (click)="blockStream()" [hidden]="streamingStatus !== 'STREAM-IN-PROGRESS'">
+            <button class="btn btn-primary btn-sm">Get Data</button> &nbsp;&nbsp;<button
+            class="btn btn-primary btn-sm" [hidden]="streamingStatus !== 'STREAM-IN-PROGRESS'">
             Pause Data Stream
           </button>
           </div>
@@ -130,27 +130,6 @@
 </div>-->
 
 <div class="container" style="margin-top: 60px;">
-
-  <!-- Vertical Bar Graph -->
-  <div class="row" style="">
-    <div class="col-5">
-      <kendo-chart>
-        <kendo-chart-series>
-          <kendo-chart-series-item type="column" [data]="langGraphData" field="count"
-                                   categoryField="language"></kendo-chart-series-item>
-        </kendo-chart-series>
-      </kendo-chart>
-    </div>
-    <div class="col-5">
-      <kendo-chart [transitions]="false">
-        <kendo-chart-series>
-          <kendo-chart-series-item type="column" [data]="verifiedStatusData" field="count"
-                                   categoryField="status"></kendo-chart-series-item>
-        </kendo-chart-series>
-      </kendo-chart>
-
-    </div>
-  </div>
   <div class="row" style="">
     <div class="col-5">
       <kendo-chart>
@@ -162,12 +141,6 @@
       </kendo-chart>
     </div>
     <div class="col-5">
-      <!--<kendo-chart>
-        <kendo-chart-series>
-          <kendo-chart-series-item type="column" [data]="testData02" field="count"
-                                   categoryField="language"></kendo-chart-series-item>
-        </kendo-chart-series>
-      </kendo-chart>-->
       <kendo-chart [categoryAxis]="{ days: days }">
         <kendo-chart-title text="Language breakdown for last 7 days"></kendo-chart-title>
         <kendo-chart-legend position="bottom" orientation="horizontal"></kendo-chart-legend>
